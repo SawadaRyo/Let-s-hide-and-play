@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] float _speed = 5f;
     float _intervalTime = 1f;
-    float _maxPleasureValue = 0f;
-    float _pleasureValue = 0f;
+
+    Rigidbody2D _rb = null;
 
     Interval _interval = null;
     void Start()
     {
         _interval = new Interval(_intervalTime);
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0) && _interval.IsCountUp())
-        {
-            AddPleasure(5f);
-            Debug.Log(_pleasureValue);
-        }
+        Move();
     }
-    float AddPleasure(float addVarue)
+   
+    void Move()
     {
-        _pleasureValue += addVarue;
-        _interval.ResetTimer();
-        return _pleasureValue;
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        Vector2 vecNor = new Vector2(h, v).normalized;
+        _rb.velocity = vecNor * 5;
     }
 }
