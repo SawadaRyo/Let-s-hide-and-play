@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _coll = GetComponent<Collider2D>();
+        _coll = GetComponentInChildren<Collider2D>();
     }
 
     // Update is called once per frame

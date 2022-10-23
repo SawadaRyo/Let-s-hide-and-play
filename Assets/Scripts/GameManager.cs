@@ -4,23 +4,29 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] PlayerController _player;
+    [SerializeField] CanvasController _canvasController;
+
     bool _playGame = false;
+    GameObject[] _stagePrefabs = null;
     Transform _spornTrans = null;
     Vector2 _spornPos = Vector2.zero;
+    PlayerController _player;
     EnemyController[] _enemies = null;
 
     public bool PlayGame => _playGame;
 
-    public void ContinueGame()
+    void Start()
     {
-        _player.transform.position = _spornTrans.position;
+        _stagePrefabs = (GameObject[])Resources.LoadAll("Stage");
     }
+
+
     public void GameSet(int state)
     {
         switch ((GameState)state)
         {
             case GameState.Start:
+                _player = GameObject.FindObjectOfType<PlayerController>();
                 _enemies = GameObject.FindObjectsOfType<EnemyController>();
                 foreach (EnemyController enemy in _enemies)
                 {
@@ -33,28 +39,19 @@ public class GameManager : MonoBehaviour
 
             case GameState.Playing:
                 break;
+
             case GameState.Clear:
-                foreach (EnemyController enemy in _enemies)
-                {
-                    enemy.Stop();
-                }
-                _player.NotPlay();
-                _playGame = false;
+                GameStop();
                 Debug.Log("Clear");
                 break;
 
             case GameState.GameOver:
-                foreach (EnemyController enemy in _enemies)
-                {
-                    enemy.Stop();
-                }
-                _player.NotPlay();
-                _playGame = false;
+                _player.transform.position = _spornPos;
+                GameStop();
                 Debug.Log("Find");
                 break;
 
             case GameState.RePlay:
-                _player.transform.position = _spornPos;
                 foreach (EnemyController enemy in _enemies)
                 {
                     enemy.Replay();
@@ -62,9 +59,20 @@ public class GameManager : MonoBehaviour
                 _player.Playing();
                 _playGame = true;
                 break;
+            case GameState.Next:
+                break;
         }
     }
 
+    void GameStop()
+    {
+        foreach (EnemyController enemy in _enemies)
+        {
+            enemy.Stop();
+        }
+        _player.NotPlay();
+        _playGame = false;
+    }
 }
 public enum GameState
 {
@@ -72,5 +80,6 @@ public enum GameState
     Playing = 1,
     Clear = 2,
     GameOver = 3,
-    RePlay = 4
+    RePlay = 4,
+    Next = 5
 }
