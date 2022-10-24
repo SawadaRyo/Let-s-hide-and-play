@@ -8,6 +8,8 @@ public class CanvasController : MonoBehaviour
     [SerializeField] GameObject[] _buttons = null;
     GameButton _gameButtons = null;
 
+    public GameObject[] Buttons => _buttons;
+
     void Start()
     {
         foreach (GameObject button in _buttons)

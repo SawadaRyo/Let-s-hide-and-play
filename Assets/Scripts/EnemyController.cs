@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] float _moveInterval = 2f;
     [SerializeField] float _rotInterval = 2f;
     [SerializeField] float _movePos = 2f;
-    [SerializeField] Transform _sightCenter = null;
+    [SerializeField] GameObject _sightCenter = null;
     [SerializeField] MovePaturn _movePaturn;
 
     GameManager _gameManager;
@@ -23,17 +23,20 @@ public class EnemyController : MonoBehaviour
         Move(_movePos, _moveInterval);
     }
 
-    IEnumerator MoveInterval(float interval)
+    public IEnumerator MoveInterval(float interval)
     {
+        _sightCenter.SetActive(false);
         Stop();
         yield return new WaitForSeconds(interval);
+        _sightCenter.SetActive(true);
         Replay();
     }
+
     void InSight()
     {
         if (!_gameManager.PlayGame) return;
 
-        Collider2D[] sightColls = Physics2D.OverlapCircleAll(_sightCenter.position, _radius);
+        Collider2D[] sightColls = Physics2D.OverlapCircleAll(_sightCenter.transform.position, _radius);
         if (sightColls.Length > 0)
         {
             foreach (Collider2D col in sightColls)
@@ -100,7 +103,7 @@ public class EnemyController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(_sightCenter.position, _radius);
+        Gizmos.DrawWireSphere(_sightCenter.transform.position, _radius);
         Gizmos.DrawLine(this.transform.position, new Vector3(this.transform.position.x + _movePos, this.transform.position.y, this.transform.position.z));
         Gizmos.DrawLine(this.transform.position, new Vector3(this.transform.position.x, this.transform.position.y + _movePos, this.transform.position.z));
     }

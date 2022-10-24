@@ -4,17 +4,24 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] int _itemIndex = 3; 
     [SerializeField] float _speed = 5f;
-    [SerializeField] GameManager _gameManager;
+    [SerializeField] float _flickValue = 250f;
+    [SerializeField] GameObject _item = null;
 
     bool _hiding = false;
+    int _itemIndexInitial = 0;
+    Vector2 _startPos = Vector2.zero;
+    Vector2 _endPos = Vector2.zero;
     Rigidbody2D _rb = null;
     Collider2D _coll = null;
+    GameManager _gameManager;
 
     public bool Hiding => _hiding;
 
-    void Start()
+    public void Init()
     {
+        _gameManager = GameObject.FindObjectOfType<GameManager>();
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponentInChildren<Collider2D>();
     }
@@ -22,20 +29,32 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!_gameManager) return;
+
         if (_gameManager.PlayGame)
         {
-            _speed = 5;
-            Move();
+            if(Input.GetMouseButtonDown(0))
+            {
+                _rb.velocity = Vector2.zero;
+                _startPos = Input.mousePosition;
+            }
+            else if(Input.GetMouseButtonUp(0))
+            {
+                _endPos = Input.mousePosition;
+                FlickMove(_startPos, _endPos);
+            }
+
+            if(Input.GetMouseButtonDown(1) && _itemIndex > 0)
+            {
+                Vector2 position = Input.mousePosition;
+                Vector2 screenToWorldPointPosition = Camera.main.ScreenToWorldPoint(position);
+                Instantiate(_item,screenToWorldPointPosition, Quaternion.identity);
+                _itemIndex--;
+            }
         }
     }
 
-    void Move()
-    {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector2 vecNor = new Vector2(h, v).normalized;
-        _rb.velocity = vecNor * _speed;
-    }
+   
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Goal")
@@ -56,8 +75,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Playing()
+    void FlickMove(Vector2 startPos, Vector2 endPos)
     {
+        if((endPos - startPos).magnitude >= _flickValue)
+        {
+            Vector3 vec = (endPos - startPos).normalized;
+            _rb.velocity = vec * _speed;
+        }
+        
+    }
+
+    public void Replay()
+    {
+        _itemIndex = _itemIndexInitial;
         _coll.enabled = true;
     }
     public void NotPlay()
