@@ -101,9 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _itemIndex: 3
   _speed: 5
-  _flickValue: 250
-  _tapInterval: 0.5
-  _item: {fileID: 0}
+  _flickValue: 100
+  _item: {fileID: 6089287873649830225, guid: 6ad0b5c2b4c9b9145bc8a9dcdc7a2ab8, type: 3}
 --- !u!50 &5926502892395444730
 Rigidbody2D:
   serializedVersion: 4
