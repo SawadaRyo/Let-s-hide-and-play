@@ -99,8 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 502b39025518e37408887b692738d770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _itemIndex: 3
   _speed: 5
-  _gameManager: {fileID: 0}
+  _flickValue: 250
+  _tapInterval: 0.5
+  _item: {fileID: 0}
 --- !u!50 &5926502892395444730
 Rigidbody2D:
   serializedVersion: 4
