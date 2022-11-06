@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
     EnemyController[] _enemies = null;
 
     public bool PlayGame => _playGame;
-    public PlayerController Player => _player;
 
     void Start()
     {
@@ -28,11 +27,7 @@ public class GameManager : MonoBehaviour
         _canvasController.ButtonState(_canvasController.Buttons[1], false);
         _canvasController.ButtonState(_canvasController.Buttons[2], false);
 
-        _player = GameObject.FindObjectOfType<PlayerController>();
-        _player.Init();
-        _spornTrans = _player.transform;
-        _spornPos = _spornTrans.position;
-        _playerCamera.Follow = _player.transform;
+        SetPlayer();
     }
 
 
@@ -46,7 +41,7 @@ public class GameManager : MonoBehaviour
                 _enemies = GameObject.FindObjectsOfType<EnemyController>();
                 foreach (EnemyController enemy in _enemies)
                 {
-                    enemy.Init(this);
+                    enemy.Init(this,_player);
                 }
                 _playGame = true;
                 break;
@@ -56,7 +51,7 @@ public class GameManager : MonoBehaviour
 
             case GameState.Clear:
                 _canvasController.ButtonState(_canvasController.Buttons[2], true);
-                GameStop();
+                StopGame();
                 _enemies = null;
                 Debug.Log("Clear");
                 break;
@@ -64,8 +59,7 @@ public class GameManager : MonoBehaviour
             case GameState.GameOver:
                 _canvasController.ButtonState(_canvasController.Buttons[1], true);
                 _player.transform.position = _spornPos;
-                GameStop();
-                Debug.Log("Find");
+                StopGame();
                 break;
 
             case GameState.RePlay:
@@ -81,15 +75,11 @@ public class GameManager : MonoBehaviour
                 _canvasController.ButtonState(_canvasController.Buttons[2], false);
                 Destroy(_currentStage);
                 _stageIndex++;
-                if (_stagePrefabs[_stageIndex] != null)
+                if (_stagePrefabs.Length > _stageIndex)
                 {
                     _currentStage = Instantiate(_stagePrefabs[_stageIndex]);
                     _canvasController.ButtonState(_canvasController.Buttons[0], true);
-                    _player = GameObject.FindObjectOfType<PlayerController>();
-                    _player.Init();
-                    _spornTrans = _player.transform;
-                    _spornPos = _spornTrans.position;
-                    _playerCamera.Follow = _player.transform;
+                    SetPlayer();
                 }
                 else
                 {
@@ -98,8 +88,15 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-
-    void GameStop()
+    void SetPlayer()
+    {
+        _player = GameObject.FindObjectOfType<PlayerController>();
+        _player.Init();
+        _spornTrans = _player.transform;
+        _spornPos = _spornTrans.position;
+        _playerCamera.Follow = _player.transform;
+    }
+    void StopGame()
     {
         foreach (EnemyController enemy in _enemies)
         {
