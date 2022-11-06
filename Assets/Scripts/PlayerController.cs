@@ -99,7 +99,6 @@ public class PlayerController : MonoBehaviour
             _clickCount++;
             Invoke("OnDoubleClick", _tapInterval);
         }
-
     }
     void OnDoubleClick()
     {
@@ -110,8 +109,8 @@ public class PlayerController : MonoBehaviour
         if (_itemIndex > 0)
         {
             Vector2 position = Input.mousePosition;
-            Vector2 screenToWorldPointPosition = Camera.main.ScreenToWorldPoint(position);
-            Instantiate(_item, screenToWorldPointPosition, Quaternion.identity);
+            //Vector2 screenToWorldPointPosition = Camera.main.ScreenToWorldPoint(position);
+            Instantiate(_item, this.transform.position, Quaternion.identity);
             _itemIndex--;
         }
         _doubleClickflg = false;

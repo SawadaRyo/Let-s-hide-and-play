@@ -16,12 +16,14 @@ public class EnemyController : MonoBehaviour
     [SerializeField] MovePaturn _movePaturn;
 
     GameManager _gameManager;
+    PlayerController _playerController = null;
     Tween[] _tweens = new Tween[2];
     
 
-    public void Init(GameManager gameManager)
+    public void Init(GameManager gameManager,PlayerController playerController)
     {
         _gameManager = gameManager;
+        _playerController = playerController;
         Move(_movePos, _moveInterval);
     }
 
@@ -75,7 +77,7 @@ public class EnemyController : MonoBehaviour
     {
         _tweens[0] = this.transform.DORotate(new Vector3(0f, 0f, 180f), interval, RotateMode.LocalAxisAdd)
             .SetEase(Ease.Linear)
-            .OnUpdate(() => InSightTryangle(_gameManager.Player))
+            .OnUpdate(() => InSightTryangle(_playerController))
             .OnComplete(() => Move(_movePos *= -1, _moveInterval));
     }
     void Move(float movePos, float interval)
@@ -96,7 +98,7 @@ public class EnemyController : MonoBehaviour
 
         _tweens[1]
             .SetEase(Ease.Linear)
-            .OnUpdate(()=> InSightTryangle(_gameManager.Player))
+            .OnUpdate(()=> InSightTryangle(_playerController))
             .OnComplete(() => Rotate(_rotInterval));
     }
     public void Stop()
@@ -113,7 +115,6 @@ public class EnemyController : MonoBehaviour
             t.Play();
         }
     }
-
     public enum MovePaturn
     {
         Horizontal,
