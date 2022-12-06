@@ -8,7 +8,7 @@ public class Presenter : MonoBehaviour
 {
     GameManager _gameManager = null;
     PlayerController _playerController = null;
-    IPresenter view null;
+    IView _view = null;
     void Start()
     {
         _gameManager = FindObjectOfType<GameManager>();
@@ -20,8 +20,7 @@ public class Presenter : MonoBehaviour
     {
         _playerController.ModelData
             .Subscribe(x =>
-
-
+            _view.EventMethod(x)
             );
     }
 }

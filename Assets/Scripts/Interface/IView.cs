@@ -1,4 +1,6 @@
-public interface IPresenter
+using UniRx;
+
+public interface IView
 {
-    void EventMethod<T>() where T : IModel<T>;
+    void EventMethod<T>(T modelData);
 }

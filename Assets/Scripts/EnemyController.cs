@@ -7,7 +7,7 @@ using UniRx;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] float _radius = 2f;
+    [SerializeField] float _radius = 0.75f;
     [SerializeField] float _moveInterval = 2f;
     [SerializeField] float _rotInterval = 2f;
     [SerializeField] float _movePos = 2f;
@@ -36,24 +36,13 @@ public class EnemyController : MonoBehaviour
         Replay();
     }
 
-    //void InSight()
-    //{
-    //    if (!_gameManager.PlayGame) return;
+    void PlayerCompornet(PlayerController playerTrans)
+    {
+        InBady(playerTrans);
+        InSight(playerTrans);
+    }
 
-    //    Collider2D[] sightColls = Physics2D.OverlapCircleAll(_sightCenter.transform.position, _radius);
-    //    if (sightColls.Length > 0)
-    //    {
-    //        foreach (Collider2D col in sightColls)
-    //        {
-    //            if (col.TryGetComponent<PlayerController>(out PlayerController p))
-    //            {
-    //                if (p.Hiding) return;
-    //                _gameManager.GameSet((int)GameState.GameOver);
-    //            }
-    //        }
-    //    }
-    //}
-    void InSightTryangle(PlayerController playerTrans)
+    void InSight(PlayerController playerTrans)
     {
         Vector3 vec1 = _sightPoints[1].position - _sightPoints[0].position;
         Vector3 vecP1 = playerTrans.transform.position - _sightPoints[1].position;
@@ -66,10 +55,18 @@ public class EnemyController : MonoBehaviour
         float c2 = vec2.x * vecP2.y - vec2.y * vecP2.x;
         float c3 = vec3.x * vecP3.y - vec3.y * vecP3.x;
 
-        if(c1 > 0 && c2 > 0 && c3 > 0
+        if(!playerTrans.Hiding
+        && c1 > 0 && c2 > 0 && c3 > 0
         || c1 < 0 && c2 < 0 && c3 < 0)
         {
-            if (playerTrans.Hiding) return;
+            _gameManager.GameSet((int)GameState.GameOver);
+        }
+    }
+    void InBady(PlayerController playerTrans)
+    {
+        if(!playerTrans.Hiding
+        && (playerTrans.transform.position - transform.position).magnitude < _radius)
+        {
             _gameManager.GameSet((int)GameState.GameOver);
         }
     }
@@ -77,7 +74,7 @@ public class EnemyController : MonoBehaviour
     {
         _tweens[0] = this.transform.DORotate(new Vector3(0f, 0f, 180f), interval, RotateMode.LocalAxisAdd)
             .SetEase(Ease.Linear)
-            .OnUpdate(() => InSightTryangle(_playerController))
+            .OnUpdate(() => PlayerCompornet(_playerController))
             .OnComplete(() => Move(_movePos *= -1, _moveInterval));
     }
     void Move(float movePos, float interval)
@@ -98,7 +95,7 @@ public class EnemyController : MonoBehaviour
 
         _tweens[1]
             .SetEase(Ease.Linear)
-            .OnUpdate(()=> InSightTryangle(_playerController))
+            .OnUpdate(()=> PlayerCompornet(_playerController))
             .OnComplete(() => Rotate(_rotInterval));
     }
     public void Stop()
@@ -126,7 +123,6 @@ public class EnemyController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        //Gizmos.DrawWireSphere(_sightCenter.transform.position, _radius);
         Gizmos.DrawLine(_sightPoints[0].position, _sightPoints[1].position);
         Gizmos.DrawLine(_sightPoints[1].position, _sightPoints[2].position);
         Gizmos.DrawLine(_sightPoints[2].position, _sightPoints[0].position);
