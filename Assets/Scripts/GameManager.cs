@@ -14,10 +14,11 @@ public class GameManager : MonoBehaviour
     Object[] _stagePrefabs = null;
     Transform _spornTrans = null;
     Vector2 _spornPos = Vector2.zero;
-    PlayerController _player;
+    PlayerController _player = null;
     EnemyController[] _enemies = null;
 
     public bool PlayGame => _playGame;
+    public PlayerController Player => _player;
 
     void Start()
     {
